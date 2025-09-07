@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const Person = require("./models/person");
 var morgan = require("morgan");
-const { default: mongoose } = require("mongoose");
 
 const app = express();
 
@@ -74,11 +73,13 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const person_id = Number(request.params.id);
+  const person_id = request.params.id;
 
-  persons = persons.filter((person) => person.id !== person_id);
-
-  response.status(204).end();
+  Person.findByIdAndDelete(person_id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => console.log("ERROR DELETE: ", error));
 });
 
 app.get("/info", (request, response) => {
@@ -89,6 +90,12 @@ app.get("/info", (request, response) => {
     `<p>Phonebook has info for ${tamanio} people</p> <p>${fecha}</p>`
   );
 });
+
+const unkownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unkown endpoint" });
+};
+
+app.use(unkownEndpoint);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
