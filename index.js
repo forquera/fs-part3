@@ -66,15 +66,13 @@ app.post("/api/persons", (request, response, next) => {
 });
 
 app.get("/api/persons/:id", (request, response, next) => {
-  const person_id = Number(request.params.id);
+  const person_id = request.params.id;
 
-  const person = persons.find((person) => person.id === person_id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Person.findById(person_id)
+    .then((person) => {
+      response.json(person);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
@@ -108,13 +106,17 @@ app.delete("/api/persons/:id", (request, response) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (request, response) => {
-  const tamanio = persons.length;
-  const fecha = new Date().toLocaleString();
+app.get("/info", (request, response, next) => {
+  Person.find({})
+    .then((persons) => {
+      const tamanio = persons.length;
+      const fecha = new Date().toLocaleString();
 
-  response.send(
-    `<p>Phonebook has info for ${tamanio} people</p> <p>${fecha}</p>`
-  );
+      response.send(
+        `<p>Phonebook has info for ${tamanio} people</p> <p>${fecha}</p>`
+      );
+    })
+    .catch((error) => next(error));
 });
 
 const unkownEndpoint = (request, response) => {
