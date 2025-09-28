@@ -30,18 +30,6 @@ app.get("/api/persons", (request, response, next) => {
 app.post("/api/persons", (request, response, next) => {
   const person = request.body;
 
-  if (!person.name) {
-    return response.status(400).json({
-      error: "Name is missing!",
-    });
-  }
-
-  if (!person.number) {
-    return response.status(400).json({
-      error: "Number is missing!",
-    });
-  }
-
   // Person.find({}).then((personas) => {
   //   console.log("BUSCADO: ", personas);
   // });
@@ -87,11 +75,9 @@ app.put("/api/persons/:id", (request, response, next) => {
 
   Person.findByIdAndUpdate(person_id, person, { new: true })
     .then((personUpdate) => {
-      console.log("PERSONA MODIFICADA: ", personUpdate);
       response.json(personUpdate);
     })
     .catch((error) => {
-      console.log("ERROR: ", error);
       next(error);
     });
 });
@@ -129,6 +115,10 @@ app.use(unkownEndpoint);
 const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  }
+
+  if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
