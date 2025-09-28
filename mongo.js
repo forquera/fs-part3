@@ -29,7 +29,7 @@ if (process.argv.length > 3) {
     number: newNumber,
   });
 
-  person.save().then((result) => {
+  person.save().then((_result) => {
     console.log(`${newName} - ${newNumber} saved!`);
     mongoose.connection.close();
   });

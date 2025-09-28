@@ -6,7 +6,7 @@ const url = process.env.MONGODB_URI;
 
 mongoose
   .connect(url)
-  .then((result) => {
+  .then((_result) => {
     console.log("conectado a bd");
   })
   .catch((error) => {

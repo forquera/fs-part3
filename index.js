@@ -6,7 +6,7 @@ var morgan = require("morgan");
 
 const app = express();
 
-morgan.token("body", function (req, res) {
+morgan.token("body", function (req, _res) {
   return JSON.stringify(req.body);
 });
 
@@ -84,11 +84,11 @@ app.put("/api/persons/:id", (request, response, next) => {
     });
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   const person_id = request.params.id;
 
   Person.findByIdAndDelete(person_id)
-    .then((result) => {
+    .then((_result) => {
       response.status(204).end();
     })
     .catch((error) => next(error));
